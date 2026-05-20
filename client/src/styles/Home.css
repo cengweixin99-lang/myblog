@@ -1,0 +1,30 @@
+
+/* 文章列表网格 */
+.posts-grid {
+  display: grid;
+}
+
+/* 卡片样式 */
+.post-card {
+  background: white;
+  /* border-radius: 8px; */
+  padding: 1rem 0;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); */
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.post-title {
+  font-family: inherit;
+  font-size: 28px;
+  font-weight: 400;
+}
+
+.post-date {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  font-family: 'Roboto', system-ui, sans-serif;
+  margin-top: -0.3rem;
+}

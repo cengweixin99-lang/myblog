@@ -1,0 +1,12 @@
+
+.post-content {
+  /* 💡 撑开正文与上方日期、以及下方分割线的呼吸感 */
+  margin-top: 1rem;         
+  font-size: 1.1rem;
+  line-height: 1.8;
+  width: 100%;
+}
+
+.post-content p {
+  margin-bottom: 1rem;
+}
