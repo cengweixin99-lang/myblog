@@ -637,9 +637,9 @@ a {
 
   .post-nav-next {
     grid-column: auto;
-    margin-top: 0;
-    justify-self: start;
-    text-align: left;
+    margin-top: 0.65rem;
+    justify-self: end;
+    text-align: right;
   }
 }
 
