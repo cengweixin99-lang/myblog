@@ -2,6 +2,8 @@ name: Build Static Site
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
   issues:
     types: [opened, edited, reopened, labeled, unlabeled, closed, deleted]
   issue_comment:
