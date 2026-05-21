@@ -47,11 +47,13 @@ type PostMeta = {
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
+const README_FILE = path.join(REPO_ROOT, 'README.md');
 const OUTPUT_ROOT = path.join(REPO_ROOT, 'site', 'content');
 const TAGS_DIR = path.join(OUTPUT_ROOT, 'tags');
 const DATA_DIR = path.join(REPO_ROOT, 'site', 'data');
 const NAVIGATION_DATA_FILE = path.join(DATA_DIR, 'navigation.toml');
 const TOP_LABEL = 'Top';
+const SITE_URL = 'https://www.weisley1314.com';
 const SPECIAL_NAV_ITEMS = [
   { label: 'About', name: 'About' },
   { label: 'Things I like', name: 'Things I like' },
@@ -194,6 +196,10 @@ function formatCommentDate(value: string) {
   return `${map.year}-${map.month}-${map.day} ${map.hour}:${map.minute}`;
 }
 
+function formatReadmeDate(value: string) {
+  return value.slice(0, 10);
+}
+
 function buildCommentsBlock(comments: GitHubIssueComment[]) {
   if (comments.length === 0) {
     return '';
@@ -287,6 +293,54 @@ function buildNavigationDataFile(issues: GitHubIssue[]) {
   }).filter(Boolean);
 
   return [`items = [${items.join(', ')}]`, ''].join('\n');
+}
+
+function buildReadmeFile(posts: GitHubIssue[]) {
+  const tagMap = new Map<string, PostMeta[]>();
+
+  for (const issue of [...posts].sort(byCreatedDesc)) {
+    const meta = issueToPostMeta(issue);
+    for (const label of meta.labels) {
+      const existing = tagMap.get(label) ?? [];
+      existing.push(meta);
+      tagMap.set(label, existing);
+    }
+  }
+
+  const sortedTags = Array.from(tagMap.entries()).sort(([left], [right]) => {
+    if (left === TOP_LABEL) return -1;
+    if (right === TOP_LABEL) return 1;
+    return left.localeCompare(right);
+  });
+
+  const tagSections = sortedTags.flatMap(([label, metas]) => [
+    `## ${label}`,
+    '',
+    ...metas.map(
+      (post) => `- [${post.title}](${post.issueUrl}) - ${formatReadmeDate(post.date)}`
+    ),
+    '',
+  ]);
+
+  return [
+    "# Weisley's Blog",
+    '',
+    `[Visit the site](${SITE_URL})`,
+    '',
+    'A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.',
+    '',
+    '## Posts by Tag',
+    '',
+    ...tagSections,
+    '## Project Notes',
+    '',
+    '- `scripts/fetch_issues.ts` pulls authored GitHub issues and comments, then generates Zola content.',
+    '- `site/` contains the static site templates, styles, config, and generated content.',
+    '- `.github/workflows/build-site.yml` rebuilds and deploys the site with GitHub Pages.',
+    '',
+    'Generated automatically from GitHub Issues.',
+    '',
+  ].join('\n');
 }
 
 function byCreatedDesc(a: GitHubIssue, b: GitHubIssue) {
@@ -418,6 +472,10 @@ async function writeNavigationData(issues: GitHubIssue[]) {
   await writeFile(NAVIGATION_DATA_FILE, buildNavigationDataFile(issues), 'utf8');
 }
 
+async function writeReadmeIndex(posts: GitHubIssue[]) {
+  await writeFile(README_FILE, buildReadmeFile(posts), 'utf8');
+}
+
 async function main() {
   await loadServerEnv();
   await ensureDirectories();
@@ -439,6 +497,7 @@ async function main() {
   await writeSiteContent(posts, commentsByIssueNumber);
   await writeTagPages(posts);
   await writeNavigationData(posts);
+  await writeReadmeIndex(posts);
 
   console.log(`Generated ${posts.length} authored issue posts into ${OUTPUT_ROOT}`);
 }

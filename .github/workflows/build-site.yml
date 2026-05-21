@@ -10,7 +10,7 @@ on:
     types: [created, edited, deleted]
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -40,6 +40,17 @@ jobs:
 
       - name: Fetch issues into site content
         run: pnpm run fetch:issues
+
+      - name: Commit README index
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Update README index [skip ci]"
+            git push
+          fi
 
       - name: Setup Zola
         uses: taiki-e/install-action@v2

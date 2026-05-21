@@ -1,37 +1,33 @@
-﻿# myblog
+# Weisley's Blog
 
-A GitHub-Issues-driven personal site built with:
+[Visit the site](https://www.weisley1314.com)
 
-- `scripts/fetch_issues.ts` for content generation
-- `Zola` for static rendering
-- `GitHub Actions` for build and deploy
+A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 
-## Current architecture
+## Posts by Tag
 
-- `scripts/`
-  Pulls authored GitHub issues and comments, then generates Zola content files.
-- `site/`
-  The actual static site source: templates, styles, config, and generated content.
-- `.github/workflows/build-site.yml`
-  Rebuilds the site on issue and comment changes, then deploys to GitHub Pages.
+## Top
 
-## Important directories
+- [Things I really like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
+- [Things I don't like](https://github.com/cengweixin99-lang/myblog/issues/16) - 2026-05-21
+- [About Me](https://github.com/cengweixin99-lang/myblog/issues/13) - 2026-05-21
 
-- `scripts/fetch_issues.ts`
-- `site/templates/`
-- `site/static/site.css`
-- `site/content/_index.md`
+## About
 
-## Local workflow
+- [About Me](https://github.com/cengweixin99-lang/myblog/issues/13) - 2026-05-21
 
-```powershell
-pnpm run fetch:issues
-cd site
-zola build
-zola serve
-```
+## Things I don't like
 
-## Notes
+- [Things I don't like](https://github.com/cengweixin99-lang/myblog/issues/16) - 2026-05-21
 
-- `site/public/` is build output and should not be edited manually.
-- `site/content/tags/`, `site/content/*.md`, and `site/data/navigation.toml` are generated content.
+## Things I like
+
+- [Things I really like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
+
+## Project Notes
+
+- `scripts/fetch_issues.ts` pulls authored GitHub issues and comments, then generates Zola content.
+- `site/` contains the static site templates, styles, config, and generated content.
+- `.github/workflows/build-site.yml` rebuilds and deploys the site with GitHub Pages.
+
+Generated automatically from GitHub Issues.
