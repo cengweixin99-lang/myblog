@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.extra.label_name }} | {{ config.title }}{% endblock title %}
+
+{% block content %}
+  <main class="page-content container">
+    <p class="sign">{{ page.extra.label_name }}</p>
+    <div class="top-posts-timeline">
+      {% for post in page.extra.post_links %}
+        <article class="top-post-row">
+          <span class="top-post-date">{{ post.date | date(format="%Y-%m-%d") }}</span>
+          <a href="{{ get_url(path=post.path) }}" class="top-post-title">{{ post.title }}</a>
+        </article>
+      {% endfor %}
+    </div>
+  </main>
+{% endblock content %}

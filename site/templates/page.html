@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} | {{ config.title }}{% endblock title %}
+
+{% block content %}
+  <main class="page-content container">
+    <div class="posts-grid">
+      <article class="post-card post-detail-card">
+        <a href="{{ page.permalink }}" class="post-title hover-underline-animation">{{ page.title }}</a>
+        <div class="post-meta-row">
+          <p class="post-date">{{ page.date | date(format="%Y-%m-%d") }}</p>
+          {% if page.extra.issue_url %}
+            <a href="{{ page.extra.issue_url }}" target="_blank" rel="noreferrer" class="post-source-link">Read the source</a>
+          {% endif %}
+        </div>
+        <section class="post-content">
+          {{ page.content | safe }}
+        </section>
+        {% if page.extra.label_links %}
+          <div class="post-tags">
+            {% for label in page.extra.label_links %}
+              <a href="{{ get_url(path='tag/' ~ label.slug) }}" class="post-tag-link">#{{ label.name }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div class="post-detail-divider" aria-hidden="true"></div>
+        {% if page.extra.has_comments and page.extra.comments_html %}
+          {{ page.extra.comments_html | safe }}
+        {% endif %}
+        <nav class="post-navigation">
+          {% if page.lower %}
+            <a href="{{ page.lower.permalink }}" class="post-nav-item post-nav-prev">
+              <span class="post-nav-title"><span class="post-nav-arrow post-nav-arrow-prev" aria-hidden="true">&lt;</span>{{ page.lower.title }}</span>
+            </a>
+          {% endif %}
+          {% if page.higher %}
+            <a href="{{ page.higher.permalink }}" class="post-nav-item post-nav-next">
+              <span class="post-nav-title">{{ page.higher.title }}<span class="post-nav-arrow post-nav-arrow-next" aria-hidden="true">&gt;</span></span>
+            </a>
+          {% endif %}
+        </nav>
+      </article>
+    </div>
+  </main>
+{% endblock content %}

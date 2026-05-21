@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+    <meta name="description" content="{{ config.description }}" />
+    <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path='atom.xml') }}" />
+    <link rel="stylesheet" href="{{ get_url(path='site.css') }}" />
+  </head>
+  <body>
+    <div class="layout page-layout">
+      <hr />
+      <header class="header">
+        <div class="header-row">
+          <div class="header-content">
+            <nav class="nav" aria-label="Primary">
+              <ul class="nav-list">
+                <li><a href="{{ config.base_url }}" class="hover-underline-animation">Home</a></li>
+                <li><a href="{{ get_url(path='tag/top') }}" class="hover-underline-animation">Top</a></li>
+                <li><a href="{{ get_url(path=config.extra.about_path) }}" class="hover-underline-animation">About</a></li>
+                <li><a href="{{ get_url(path=config.extra.things_like_path) }}" class="hover-underline-animation">Things I like</a></li>
+                <li><a href="{{ get_url(path=config.extra.things_dislike_path) }}" class="hover-underline-animation">Things I don't like</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </header>
+      <div class="page-content">
+        {% block content %}{% endblock content %}
+      </div>
+      <footer class="footer">
+        <div class="footer-content">
+          <p>&copy; 2026 My Blog. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

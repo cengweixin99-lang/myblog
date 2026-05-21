@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ config.title }}{% endblock title %}
+
+{% block content %}
+  <main class="page-content container">
+    {% set posts = paginator.pages %}
+    <div class="posts-grid">
+      {% for page in posts %}
+        <article class="post-card">
+          <a href="{{ page.permalink }}" class="post-title hover-underline-animation">{{ page.title }}</a>
+          <div class="post-meta-row">
+            <p class="post-date">{{ page.date | date(format="%Y-%m-%d") }}</p>
+            {% if page.extra.issue_url %}
+              <a href="{{ page.extra.issue_url }}" target="_blank" rel="noreferrer" class="post-source-link">Read the source</a>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+    <nav class="pagination">
+      <span>{% if paginator.previous %}<a href="{{ paginator.previous }}" class="pagination-link pagination-link-prev">&lt; Pre</a>{% endif %}</span>
+      <span>{% if paginator.next %}<a href="{{ paginator.next }}" class="pagination-link pagination-link-next">Next &gt;</a>{% endif %}</span>
+    </nav>
+  </main>
+{% endblock content %}

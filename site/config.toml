@@ -1,0 +1,24 @@
+base_url = "http://127.0.0.1:1111"
+title = "myblog"
+description = "A minimalist personal site built from GitHub Issues."
+default_language = "en"
+compile_sass = false
+build_search_index = false
+generate_feeds = true
+feed_filenames = ["atom.xml"]
+author = "cengweixin99-lang"
+
+[markdown]
+render_emoji = true
+external_links_target_blank = true
+
+[extra]
+source = "github-issues"
+repo = "cengweixin99-lang/myblog"
+profile_quote = "People die,but what we do lives on. "
+about_path = "about"
+things_like_path = "things-i-like"
+things_dislike_path = "things-i-dont-like"
+
+[link_checker]
+skip_prefixes = ["http://127.0.0.1", "https://127.0.0.1"]

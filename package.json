@@ -1,0 +1,13 @@
+{
+  "name": "myblog-static-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fetch:issues": "tsx scripts/fetch_issues.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.41",
+    "tsx": "^4.22.1",
+    "typescript": "^5.8.3"
+  }
+}
