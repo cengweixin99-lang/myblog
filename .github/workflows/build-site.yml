@@ -49,7 +49,7 @@ jobs:
         working-directory: site
 
       - name: Build site
-        run: zola build --base-url https://cengweixin99-lang.github.io/myblog
+        run: zola build --base-url https://www.weisley1314.com
         working-directory: site
 
       - name: Upload Pages artifact
