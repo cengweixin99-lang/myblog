@@ -44,6 +44,10 @@ jobs:
         with:
           tool: zola
 
+      - name: Clean previous Zola output
+        run: rm -rf public
+        working-directory: site
+
       - name: Build site
         run: zola build --base-url https://cengweixin99-lang.github.io/myblog
         working-directory: site

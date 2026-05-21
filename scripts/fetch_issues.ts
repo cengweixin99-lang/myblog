@@ -55,7 +55,6 @@ const SPECIAL_PAGE_ROUTES = [
   { label: 'Things I like', slug: 'things-i-like', title: 'Things I like' },
   { label: "Things I don't like", slug: 'things-i-dont-like', title: "Things I don't like" },
 ] as const;
-const SPECIAL_PAGE_LABELS = new Set(SPECIAL_PAGE_ROUTES.map((page) => page.label));
 const RESERVED_LABELS = new Set([...SPECIAL_PAGE_ROUTES.map((page) => page.label)]);
 
 async function loadServerEnv() {
@@ -184,7 +183,7 @@ function formatCommentDate(value: string) {
   return `${map.year}-${map.month}-${map.day} ${map.hour}:${map.minute}`;
 }
 
-function buildCommentsBlock(comments: GitHubIssueComment[], issueUrl: string) {
+function buildCommentsBlock(comments: GitHubIssueComment[]) {
   if (comments.length === 0) {
     return '';
   }
@@ -222,7 +221,7 @@ function buildCommentsBlock(comments: GitHubIssueComment[], issueUrl: string) {
 }
 
 function buildPostFile(issue: GitHubIssue, meta: PostMeta, comments: GitHubIssueComment[]) {
-  const commentsHtml = buildCommentsBlock(comments, meta.issueUrl);
+  const commentsHtml = buildCommentsBlock(comments);
   const labelLinks = meta.labels.length ? `label_links = ${buildInlineLabelLinks(meta.labels)}` : '';
 
   return [
@@ -251,15 +250,27 @@ function buildPostFile(issue: GitHubIssue, meta: PostMeta, comments: GitHubIssue
     .join('\n');
 }
 
-function buildStandalonePageFile(issue: GitHubIssue, title: string, slug: string) {
+function buildStandalonePageFile(issue: GitHubIssue, slug: string, comments: GitHubIssueComment[]) {
+  const meta = issueToPostMeta(issue);
+  const commentsHtml = buildCommentsBlock(comments);
+  const labelLinks = meta.labels.length ? `label_links = ${buildInlineLabelLinks(meta.labels)}` : '';
+
   return [
     '+++',
-    `title = "${escapeToml(title)}"`,
-    `date = "${toDateTimeString(issue.created_at)}"`,
-    `updated = "${toDateTimeString(issue.updated_at)}"`,
+    `title = "${escapeToml(issue.title)}"`,
+    `date = "${meta.date}"`,
+    `updated = "${meta.updated}"`,
     `path = "${slug}"`,
     'draft = false',
-    `extra = { issue_number = ${issue.number}, issue_url = "${issue.html_url}" }`,
+    '[extra]',
+    `issue_number = ${issue.number}`,
+    `issue_url = "${issue.html_url}"`,
+    `is_top = ${meta.isTop ? 'true' : 'false'}`,
+    `has_comments = ${comments.length > 0 ? 'true' : 'false'}`,
+    labelLinks,
+    "comments_html = '''",
+    escapeTomlMultilineLiteral(commentsHtml),
+    "'''",
     '+++',
     '',
     issue.body?.trim() || '',
@@ -405,14 +416,18 @@ async function writeTagPages(posts: GitHubIssue[]) {
   );
 }
 
-async function writeSpecialPages(issues: GitHubIssue[]) {
+async function writeSpecialPages(
+  issues: GitHubIssue[],
+  commentsByIssueNumber: Map<number, GitHubIssueComment[]>
+) {
   await Promise.all(
     SPECIAL_PAGE_ROUTES.map(async (page) => {
       const issue = issues.find((item) => hasLabel(item, page.label));
       if (!issue) return;
 
       const target = path.join(PAGES_DIR, `${page.slug}.md`);
-      await writeFile(target, buildStandalonePageFile(issue, page.title, page.slug), 'utf8');
+      const comments = commentsByIssueNumber.get(issue.number) || [];
+      await writeFile(target, buildStandalonePageFile(issue, page.slug, comments), 'utf8');
     })
   );
 }
@@ -427,7 +442,7 @@ async function main() {
 
   const posts = authoredIssues.filter((issue) => {
     if (issue.pull_request) return false;
-    return !issue.labels.some((label) => SPECIAL_PAGE_LABELS.has(label.name));
+    return true;
   });
 
   const commentsEntries = await Promise.all(
@@ -436,7 +451,7 @@ async function main() {
   const commentsByIssueNumber = new Map<number, GitHubIssueComment[]>(commentsEntries);
 
   await writeSiteContent(posts, commentsByIssueNumber);
-  await writeSpecialPages(authoredIssues);
+  await writeSpecialPages(authoredIssues, commentsByIssueNumber);
   await writeTagPages(posts);
 
   console.log(`Generated ${posts.length} authored issue posts into ${OUTPUT_ROOT}`);
