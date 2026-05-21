@@ -37,6 +37,7 @@ type GitHubIssueComment = {
 type PostMeta = {
   id: number;
   title: string;
+  path: string;
   date: string;
   updated: string;
   isTop: boolean;
@@ -47,7 +48,6 @@ type PostMeta = {
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
 const OUTPUT_ROOT = path.join(REPO_ROOT, 'site', 'content');
-const PAGES_DIR = path.join(OUTPUT_ROOT, 'pages');
 const TAGS_DIR = path.join(OUTPUT_ROOT, 'tags');
 const TOP_LABEL = 'Top';
 const SPECIAL_PAGE_ROUTES = [
@@ -141,10 +141,17 @@ function escapeTomlMultilineLiteral(value: string) {
   return value.replaceAll("'''", '&#39;&#39;&#39;');
 }
 
+function getSpecialPageRoute(issue: GitHubIssue) {
+  return SPECIAL_PAGE_ROUTES.find((page) => hasLabel(issue, page.label));
+}
+
 function issueToPostMeta(issue: GitHubIssue): PostMeta {
+  const specialPageRoute = getSpecialPageRoute(issue);
+
   return {
     id: issue.number,
     title: issue.title,
+    path: specialPageRoute ? specialPageRoute.slug : `post/${issue.number}`,
     date: toDateTimeString(issue.created_at),
     updated: toDateTimeString(issue.updated_at),
     isTop: issue.labels.some((label) => label.name === TOP_LABEL),
@@ -163,7 +170,7 @@ function buildInlinePostLinks(posts: PostMeta[]) {
   return `[${posts
     .map(
       (post) =>
-        `{ title = "${escapeToml(post.title)}", path = "post/${post.id}", date = "${escapeToml(post.date)}" }`
+        `{ title = "${escapeToml(post.title)}", path = "${escapeToml(post.path)}", date = "${escapeToml(post.date)}" }`
     )
     .join(', ')}]`;
 }
@@ -229,7 +236,7 @@ function buildPostFile(issue: GitHubIssue, meta: PostMeta, comments: GitHubIssue
     `title = "${escapeToml(meta.title)}"`,
     `date = "${meta.date}"`,
     `updated = "${meta.updated}"`,
-    `path = "post/${meta.id}"`,
+    `path = "${escapeToml(meta.path)}"`,
     `draft = false`,
     `weight = ${meta.isTop ? 1 : 100}`,
     '[extra]',
@@ -248,34 +255,6 @@ function buildPostFile(issue: GitHubIssue, meta: PostMeta, comments: GitHubIssue
   ]
     .filter(Boolean)
     .join('\n');
-}
-
-function buildStandalonePageFile(issue: GitHubIssue, slug: string, comments: GitHubIssueComment[]) {
-  const meta = issueToPostMeta(issue);
-  const commentsHtml = buildCommentsBlock(comments);
-  const labelLinks = meta.labels.length ? `label_links = ${buildInlineLabelLinks(meta.labels)}` : '';
-
-  return [
-    '+++',
-    `title = "${escapeToml(issue.title)}"`,
-    `date = "${meta.date}"`,
-    `updated = "${meta.updated}"`,
-    `path = "${slug}"`,
-    'draft = false',
-    '[extra]',
-    `issue_number = ${issue.number}`,
-    `issue_url = "${issue.html_url}"`,
-    `is_top = ${meta.isTop ? 'true' : 'false'}`,
-    `has_comments = ${comments.length > 0 ? 'true' : 'false'}`,
-    labelLinks,
-    "comments_html = '''",
-    escapeTomlMultilineLiteral(commentsHtml),
-    "'''",
-    '+++',
-    '',
-    issue.body?.trim() || '',
-    '',
-  ].join('\n');
 }
 
 function buildTagPageFile(label: string, posts: PostMeta[]) {
@@ -371,15 +350,19 @@ async function fetchIssueComments(issueNumber: number): Promise<GitHubIssueComme
 }
 
 async function ensureDirectories() {
-  await rm(PAGES_DIR, { recursive: true, force: true });
+  await rm(path.join(OUTPUT_ROOT, 'pages'), { recursive: true, force: true });
   await rm(TAGS_DIR, { recursive: true, force: true });
-  await mkdir(PAGES_DIR, { recursive: true });
   await mkdir(TAGS_DIR, { recursive: true });
 
   const entries = await readdir(OUTPUT_ROOT, { withFileTypes: true });
   await Promise.all(
     entries
-      .filter((entry) => entry.isFile() && /^\d+\.md$/.test(entry.name))
+      .filter(
+        (entry) =>
+          entry.isFile() &&
+          (/^\d+\.md$/.test(entry.name) ||
+            SPECIAL_PAGE_ROUTES.some((page) => entry.name === `${page.slug}.md`))
+      )
       .map((entry) => rm(path.join(OUTPUT_ROOT, entry.name), { force: true }))
   );
 }
@@ -390,7 +373,8 @@ async function writeSiteContent(posts: GitHubIssue[], commentsByIssueNumber: Map
   await Promise.all(
     sortedPosts.map((issue) => {
       const meta = issueToPostMeta(issue);
-      const target = path.join(OUTPUT_ROOT, `${issue.number}.md`);
+      const filename = meta.path.startsWith('post/') ? `${issue.number}.md` : `${meta.path}.md`;
+      const target = path.join(OUTPUT_ROOT, filename);
       const comments = commentsByIssueNumber.get(issue.number) || [];
       return writeFile(target, buildPostFile(issue, meta, comments), 'utf8');
     })
@@ -416,22 +400,6 @@ async function writeTagPages(posts: GitHubIssue[]) {
   );
 }
 
-async function writeSpecialPages(
-  issues: GitHubIssue[],
-  commentsByIssueNumber: Map<number, GitHubIssueComment[]>
-) {
-  await Promise.all(
-    SPECIAL_PAGE_ROUTES.map(async (page) => {
-      const issue = issues.find((item) => hasLabel(item, page.label));
-      if (!issue) return;
-
-      const target = path.join(PAGES_DIR, `${page.slug}.md`);
-      const comments = commentsByIssueNumber.get(issue.number) || [];
-      await writeFile(target, buildStandalonePageFile(issue, page.slug, comments), 'utf8');
-    })
-  );
-}
-
 async function main() {
   await loadServerEnv();
   await ensureDirectories();
@@ -451,7 +419,6 @@ async function main() {
   const commentsByIssueNumber = new Map<number, GitHubIssueComment[]>(commentsEntries);
 
   await writeSiteContent(posts, commentsByIssueNumber);
-  await writeSpecialPages(authoredIssues, commentsByIssueNumber);
   await writeTagPages(posts);
 
   console.log(`Generated ${posts.length} authored issue posts into ${OUTPUT_ROOT}`);
