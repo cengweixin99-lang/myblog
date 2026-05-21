@@ -49,13 +49,15 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
 const OUTPUT_ROOT = path.join(REPO_ROOT, 'site', 'content');
 const TAGS_DIR = path.join(OUTPUT_ROOT, 'tags');
+const DATA_DIR = path.join(REPO_ROOT, 'site', 'data');
+const NAVIGATION_DATA_FILE = path.join(DATA_DIR, 'navigation.toml');
 const TOP_LABEL = 'Top';
-const SPECIAL_PAGE_ROUTES = [
-  { label: 'About', slug: 'about', title: 'About' },
-  { label: 'Things I like', slug: 'things-i-like', title: 'Things I like' },
-  { label: "Things I don't like", slug: 'things-i-dont-like', title: "Things I don't like" },
+const SPECIAL_NAV_ITEMS = [
+  { label: 'About', name: 'About' },
+  { label: 'Things I like', name: 'Things I like' },
+  { label: "Things I don't like", name: "Things I don't like" },
 ] as const;
-const RESERVED_LABELS = new Set([...SPECIAL_PAGE_ROUTES.map((page) => page.label)]);
+const LEGACY_SPECIAL_PAGE_FILES = ['about.md', 'things-i-like.md', 'things-i-dont-like.md'];
 
 async function loadServerEnv() {
   const envPath = path.join(REPO_ROOT, '.env');
@@ -117,7 +119,15 @@ function toDateTimeString(value: string) {
 }
 
 function slugifyTag(value: string) {
-  return value.trim().toLowerCase().replace(/[\\/]/g, '-').replace(/\s+/g, '-');
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[\\/]/g, '-')
+    .replace(/['\u2019]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^\p{L}\p{N}-]+/gu, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 function escapeToml(value: string) {
@@ -141,21 +151,15 @@ function escapeTomlMultilineLiteral(value: string) {
   return value.replaceAll("'''", '&#39;&#39;&#39;');
 }
 
-function getSpecialPageRoute(issue: GitHubIssue) {
-  return SPECIAL_PAGE_ROUTES.find((page) => hasLabel(issue, page.label));
-}
-
 function issueToPostMeta(issue: GitHubIssue): PostMeta {
-  const specialPageRoute = getSpecialPageRoute(issue);
-
   return {
     id: issue.number,
     title: issue.title,
-    path: specialPageRoute ? specialPageRoute.slug : `post/${issue.number}`,
+    path: `post/${issue.number}`,
     date: toDateTimeString(issue.created_at),
     updated: toDateTimeString(issue.updated_at),
     isTop: issue.labels.some((label) => label.name === TOP_LABEL),
-    labels: issue.labels.map((label) => label.name).filter((name) => !RESERVED_LABELS.has(name)),
+    labels: issue.labels.map((label) => label.name),
     issueUrl: issue.html_url,
   };
 }
@@ -274,6 +278,17 @@ function buildTagPageFile(label: string, posts: PostMeta[]) {
   ].join('\n');
 }
 
+function buildNavigationDataFile(issues: GitHubIssue[]) {
+  const items = SPECIAL_NAV_ITEMS.map((item) => {
+    const issue = issues.find((entry) => hasLabel(entry, item.label));
+    if (!issue) return null;
+
+    return `{ name = "${escapeToml(item.name)}", path = "post/${issue.number}" }`;
+  }).filter(Boolean);
+
+  return [`items = [${items.join(', ')}]`, ''].join('\n');
+}
+
 function byCreatedDesc(a: GitHubIssue, b: GitHubIssue) {
   return b.created_at.localeCompare(a.created_at);
 }
@@ -353,6 +368,7 @@ async function ensureDirectories() {
   await rm(path.join(OUTPUT_ROOT, 'pages'), { recursive: true, force: true });
   await rm(TAGS_DIR, { recursive: true, force: true });
   await mkdir(TAGS_DIR, { recursive: true });
+  await mkdir(DATA_DIR, { recursive: true });
 
   const entries = await readdir(OUTPUT_ROOT, { withFileTypes: true });
   await Promise.all(
@@ -360,8 +376,7 @@ async function ensureDirectories() {
       .filter(
         (entry) =>
           entry.isFile() &&
-          (/^\d+\.md$/.test(entry.name) ||
-            SPECIAL_PAGE_ROUTES.some((page) => entry.name === `${page.slug}.md`))
+          (/^\d+\.md$/.test(entry.name) || LEGACY_SPECIAL_PAGE_FILES.includes(entry.name))
       )
       .map((entry) => rm(path.join(OUTPUT_ROOT, entry.name), { force: true }))
   );
@@ -373,8 +388,7 @@ async function writeSiteContent(posts: GitHubIssue[], commentsByIssueNumber: Map
   await Promise.all(
     sortedPosts.map((issue) => {
       const meta = issueToPostMeta(issue);
-      const filename = meta.path.startsWith('post/') ? `${issue.number}.md` : `${meta.path}.md`;
-      const target = path.join(OUTPUT_ROOT, filename);
+      const target = path.join(OUTPUT_ROOT, `${issue.number}.md`);
       const comments = commentsByIssueNumber.get(issue.number) || [];
       return writeFile(target, buildPostFile(issue, meta, comments), 'utf8');
     })
@@ -400,6 +414,10 @@ async function writeTagPages(posts: GitHubIssue[]) {
   );
 }
 
+async function writeNavigationData(issues: GitHubIssue[]) {
+  await writeFile(NAVIGATION_DATA_FILE, buildNavigationDataFile(issues), 'utf8');
+}
+
 async function main() {
   await loadServerEnv();
   await ensureDirectories();
@@ -420,6 +438,7 @@ async function main() {
 
   await writeSiteContent(posts, commentsByIssueNumber);
   await writeTagPages(posts);
+  await writeNavigationData(posts);
 
   console.log(`Generated ${posts.length} authored issue posts into ${OUTPUT_ROOT}`);
 }

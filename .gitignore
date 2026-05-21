@@ -4,6 +4,6 @@ node_modules/
 .DS_Store
 dist/
 site/public/
-site/content/pages/
 site/content/tags/
 site/content/[0-9]*.md
+site/data/navigation.toml

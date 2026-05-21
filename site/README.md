@@ -8,10 +8,10 @@ This directory is the Zola site for the GitHub-issues-driven blog.
   Tera templates that define the page structure.
 - `static/*`
   Source static assets such as `site.css`.
+- `data/navigation.toml`
+  Generated nav links for special labels such as `About`.
 - `content/_index.md`
   Home section config, including pagination.
-- `content/pages/*`
-  Generated special pages like `About`.
 - `content/tags/*`
   Generated tag collection pages like `Top` or `Published`.
 - `content/*.md`
@@ -22,7 +22,7 @@ This directory is the Zola site for the GitHub-issues-driven blog.
 ## Content rules
 
 - Any issue authored by `GITHUB_AUTHOR` or `GITHUB_OWNER` becomes a post.
-- `About`, `Things I like`, and `Things I don't like` are reserved labels for standalone pages.
+- `About`, `Things I like`, and `Things I don't like` are normal labels, and the nav links point to the newest matching `/post/<id>/`.
 - `Top`, `Published`, and any other normal labels remain visible as post tags.
 - Each visible tag gets its own collection page under `/tag/<slug>/`.
 
@@ -58,6 +58,6 @@ zola serve
 
 The fetch script recreates these every run:
 
-- `content/pages/`
 - `content/tags/`
+- `data/navigation.toml`
 - `content/*.md` generated from issues

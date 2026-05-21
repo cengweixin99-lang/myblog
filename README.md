@@ -34,4 +34,4 @@ zola serve
 ## Notes
 
 - `site/public/` is build output and should not be edited manually.
-- `site/content/pages/`, `site/content/tags/`, and `site/content/*.md` are generated content.
+- `site/content/tags/`, `site/content/*.md`, and `site/data/navigation.toml` are generated content.
