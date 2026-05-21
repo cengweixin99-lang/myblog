@@ -38,9 +38,6 @@
       <div class="nav-backdrop" id="mobile-nav-backdrop"></div>
       <aside class="nav-panel" id="mobile-nav-panel" aria-label="Mobile navigation">
         <div class="nav-panel-inner">
-          <div class="nav-panel-head">
-            <p class="nav-panel-title">Menu</p>
-          </div>
           <ul class="nav-list nav-list-mobile">
             {{ nav_macros::render_nav_items(items=nav.items) }}
           </ul>
@@ -50,9 +47,7 @@
         {% block content %}{% endblock content %}
       </div>
       <footer class="footer">
-        <div class="footer-content">
-          <p>&copy; 2026 My Blog. All rights reserved.</p>
-        </div>
+        <div class="footer-content"></div>
       </footer>
     </div>
     <script>

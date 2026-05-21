@@ -764,21 +764,8 @@ a {
     flex-direction: column;
   }
 
-  .nav-panel-head {
-    padding: 0 0.55rem 0.95rem;
-    margin-bottom: 0.4rem;
-    border-bottom: 1px solid rgba(52, 73, 94, 0.08);
-  }
-
-  .nav-panel-title {
-    color: #34495e;
-    font-size: 0.86rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
   .nav-list-mobile {
-    padding: 0.45rem 0;
+    padding: 0.2rem 0;
     gap: 0.18rem;
     flex-direction: column;
   }

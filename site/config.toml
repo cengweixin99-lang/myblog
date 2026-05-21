@@ -1,5 +1,5 @@
 base_url = "https://www.weisley1314.com"
-title = "myblog"
+title = "Weisley's Blog"
 description = "A minimalist personal site built from GitHub Issues."
 default_language = "en"
 compile_sass = false
