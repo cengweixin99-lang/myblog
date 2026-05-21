@@ -1,3 +1,4 @@
+{% import "macros/nav.html" as nav_macros %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -14,19 +15,37 @@
       <hr />
       <header class="header">
         <div class="header-row">
+          <button
+            type="button"
+            class="nav-toggle"
+            aria-expanded="false"
+            aria-controls="mobile-nav-panel"
+            aria-label="Toggle navigation"
+          >
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </button>
           <div class="header-content">
             <nav class="nav" aria-label="Primary">
-              <ul class="nav-list">
-                <li><a href="{{ config.base_url }}" class="hover-underline-animation">Home</a></li>
-                <li><a href="{{ get_url(path='tag/top') }}" class="hover-underline-animation">Top</a></li>
-                {% for item in nav.items %}
-                  <li><a href="{{ get_url(path=item.path) }}" class="hover-underline-animation">{{ item.name }}</a></li>
-                {% endfor %}
+              <ul class="nav-list nav-list-desktop">
+                {{ nav_macros::render_nav_items(items=nav.items) }}
               </ul>
             </nav>
           </div>
         </div>
       </header>
+      <div class="nav-backdrop" id="mobile-nav-backdrop"></div>
+      <aside class="nav-panel" id="mobile-nav-panel" aria-label="Mobile navigation">
+        <div class="nav-panel-inner">
+          <div class="nav-panel-head">
+            <p class="nav-panel-title">Menu</p>
+          </div>
+          <ul class="nav-list nav-list-mobile">
+            {{ nav_macros::render_nav_items(items=nav.items) }}
+          </ul>
+        </div>
+      </aside>
       <div class="page-content">
         {% block content %}{% endblock content %}
       </div>
@@ -36,5 +55,69 @@
         </div>
       </footer>
     </div>
+    <script>
+      (() => {
+        const body = document.body;
+        const toggle = document.querySelector('.nav-toggle');
+        const panel = document.getElementById('mobile-nav-panel');
+        const backdrop = document.getElementById('mobile-nav-backdrop');
+
+        if (!toggle || !panel || !backdrop) {
+          return;
+        }
+
+        const closeMenu = () => {
+          body.classList.remove('nav-open');
+          toggle.setAttribute('aria-expanded', 'false');
+        };
+
+        const openMenu = () => {
+          body.classList.add('nav-open');
+          toggle.setAttribute('aria-expanded', 'true');
+        };
+
+        toggle.addEventListener('click', () => {
+          if (body.classList.contains('nav-open')) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+        });
+
+        document.addEventListener('click', (event) => {
+          if (!body.classList.contains('nav-open')) {
+            return;
+          }
+
+          if (toggle.contains(event.target) || panel.contains(event.target)) {
+            return;
+          }
+
+          closeMenu();
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            closeMenu();
+          }
+        });
+
+        backdrop.addEventListener('click', closeMenu);
+
+        window.addEventListener('resize', () => {
+          if (window.innerWidth > 760) {
+            closeMenu();
+          }
+        });
+
+        panel.querySelectorAll('a').forEach((link) => {
+          if (link.href === window.location.href || link.pathname === window.location.pathname) {
+            link.classList.add('is-active');
+          }
+
+          link.addEventListener('click', closeMenu);
+        });
+      })();
+    </script>
   </body>
 </html>

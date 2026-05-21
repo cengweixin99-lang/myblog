@@ -1,10 +1,12 @@
 {% extends "base.html" %}
+{% import "macros/toc.html" as toc_macros %}
 
 {% block title %}{{ page.title }} | {{ config.title }}{% endblock title %}
 
 {% block content %}
-  <main class="page-content container">
-    <div class="posts-grid">
+  {% set has_toc = page.toc | length > 0 %}
+  <main class="page-content container post-detail-container">
+    <div class="post-detail-layout{% if has_toc %} post-detail-layout-with-toc{% endif %}">
       <article class="post-card post-detail-card">
         <a href="{{ page.permalink }}" class="post-title hover-underline-animation">{{ page.title }}</a>
         <div class="post-meta-row">
@@ -40,6 +42,14 @@
           {% endif %}
         </nav>
       </article>
+      {% if has_toc %}
+        <aside class="post-toc" aria-label="Table of contents">
+          <div class="post-toc-card">
+            <p class="post-toc-heading">CONTENTS</p>
+            {{ toc_macros::render_toc(items=page.toc) }}
+          </div>
+        </aside>
+      {% endif %}
     </div>
   </main>
 {% endblock content %}

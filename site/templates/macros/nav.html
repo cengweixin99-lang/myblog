@@ -1,0 +1,7 @@
+{% macro render_nav_items(items) %}
+  <li><a href="{{ config.base_url }}" class="hover-underline-animation">Home</a></li>
+  <li><a href="{{ get_url(path='tag/top') }}" class="hover-underline-animation">Top</a></li>
+  {% for item in items %}
+    <li><a href="{{ get_url(path=item.path) }}" class="hover-underline-animation">{{ item.name }}</a></li>
+  {% endfor %}
+{% endmacro render_nav_items %}

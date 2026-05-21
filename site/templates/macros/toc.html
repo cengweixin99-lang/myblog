@@ -1,0 +1,12 @@
+{% macro render_toc(items, level=1) %}
+  {% if items | length > 0 %}
+    <ul class="post-toc-list post-toc-level-{{ level }}">
+      {% for item in items %}
+        <li class="post-toc-item post-toc-item-level-{{ level }}">
+          <a href="{{ item.permalink }}" class="post-toc-link">{{ item.title }}</a>
+          {{ self::render_toc(items=item.children, level=level + 1) }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro render_toc %}
