@@ -195,17 +195,16 @@ a {
 }
 
 .post-detail-container {
-  max-width: 1080px;
+  max-width: 800px;
 }
 
 .post-detail-layout {
   display: grid;
+  position: relative;
 }
 
 .post-detail-layout-with-toc {
-  grid-template-columns: minmax(0, 800px) 220px;
-  gap: 2rem;
-  align-items: start;
+  grid-template-columns: 1fr;
 }
 
 .post-title {
@@ -348,9 +347,16 @@ a {
 }
 
 .post-toc {
+  position: absolute;
+  top: 16px;
+  left: calc(100% + 2rem);
+  width: 220px;
+  align-self: start;
+}
+
+.post-toc-card {
   position: sticky;
   top: 16px;
-  align-self: start;
 }
 
 .post-toc-card {
@@ -632,11 +638,12 @@ a {
   }
 
   .post-navigation {
+    display: grid;
     grid-template-columns: 1fr;
   }
 
   .post-nav-next {
-    grid-column: auto;
+    grid-column: 1;
     margin-top: 0.65rem;
     justify-self: end;
     text-align: right;
@@ -651,6 +658,7 @@ a {
 
   .post-toc {
     position: static;
+    width: auto;
     order: -1;
   }
 
@@ -898,6 +906,23 @@ a {
 
   .post-detail-layout-with-toc {
     grid-template-columns: 1fr;
+  }
+
+  .post-navigation {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .post-nav-prev {
+    justify-self: start;
+    text-align: left;
+  }
+
+  .post-nav-next {
+    grid-column: 1;
+    margin-top: 0.65rem;
+    justify-self: end;
+    text-align: right;
   }
 }
 
