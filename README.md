@@ -8,7 +8,7 @@ A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 
 ## Top
 
-- [Things I really like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
+- [Things I like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
 - [Things I don't like](https://github.com/cengweixin99-lang/myblog/issues/16) - 2026-05-21
 - [About Me](https://github.com/cengweixin99-lang/myblog/issues/13) - 2026-05-21
 
@@ -22,7 +22,7 @@ A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 
 ## Things I like
 
-- [Things I really like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
+- [Things I like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
 
 ## Project Notes
 
