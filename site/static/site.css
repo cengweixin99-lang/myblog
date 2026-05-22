@@ -246,6 +246,8 @@ a {
   font-size: 0.82rem;
   line-height: 1;
   font-family: 'Roboto', system-ui, sans-serif;
+  display: inline-flex;
+  align-items: center;
 }
 
 .pagination {

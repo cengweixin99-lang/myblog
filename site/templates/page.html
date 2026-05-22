@@ -15,7 +15,7 @@
             <a href="{{ page.extra.issue_url }}" target="_blank" rel="noreferrer" class="post-source-link">Read the source</a>
           {% endif %}
           {% if page.updated and page.updated | date(format="%Y-%m-%d") != page.date | date(format="%Y-%m-%d") %}
-            <p class="post-edited-date">Edited {{ page.updated | date(format="%Y-%m-%d") }}</p>
+            <span class="post-edited-date">Edited {{ page.updated | date(format="%Y-%m-%d") }}</span>
           {% endif %}
         </div>
         <section class="post-content">
