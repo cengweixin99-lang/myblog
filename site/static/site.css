@@ -282,6 +282,22 @@ a {
   margin-bottom: 1rem;
 }
 
+.post-content ul,
+.post-content ol {
+  margin: 0 0 1rem 1.35rem;
+  padding-left: 0.65rem;
+}
+
+.post-content li {
+  padding-left: 0.15rem;
+}
+
+.post-content hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 1.8rem 0;
+}
+
 .post-content a,
 .comment-body a {
   color: #bb5649;
