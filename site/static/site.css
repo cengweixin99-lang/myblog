@@ -225,7 +225,7 @@ a {
 
 .post-meta-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.7rem;
   margin-top: -0.3rem;
   flex-wrap: wrap;
@@ -238,16 +238,15 @@ a {
 .post-source-link {
   color: #bb5649;
   font-size: 0.82rem;
-  line-height: 1;
+  line-height: 1.4;
+  font-family: 'Roboto', system-ui, sans-serif;
 }
 
 .post-edited-date {
   color: #7f8c8d;
   font-size: 0.82rem;
-  line-height: 1;
+  line-height: 1.4;
   font-family: 'Roboto', system-ui, sans-serif;
-  display: inline-flex;
-  align-items: center;
 }
 
 .pagination {
