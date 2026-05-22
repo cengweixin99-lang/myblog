@@ -282,6 +282,12 @@ a {
   margin-bottom: 1rem;
 }
 
+.post-content a,
+.comment-body a {
+  color: #bb5649;
+  text-decoration: none;
+}
+
 .post-content img {
   max-width: 100%;
   height: auto;

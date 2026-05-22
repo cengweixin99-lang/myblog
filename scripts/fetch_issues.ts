@@ -153,6 +153,47 @@ function escapeTomlMultilineLiteral(value: string) {
   return value.replaceAll("'''", '&#39;&#39;&#39;');
 }
 
+function preserveSingleLineBreaks(markdown: string) {
+  const lines = markdown.replace(/\r\n?/g, '\n').split('\n');
+  const result: string[] = [];
+  let inFence = false;
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const nextLine = lines[index + 1] ?? '';
+    const trimmed = line.trimStart();
+    const nextTrimmed = nextLine.trimStart();
+    const isFence = /^(```|~~~)/.test(trimmed);
+
+    if (isFence) {
+      inFence = !inFence;
+      result.push(line);
+      continue;
+    }
+
+    if (
+      !inFence &&
+      line.trim() &&
+      nextLine.trim() &&
+      !line.endsWith('  ') &&
+      !/^#{1,6}\s/.test(trimmed) &&
+      !/^#{1,6}\s/.test(nextTrimmed) &&
+      !/^([-+*]|\d+\.)\s/.test(trimmed) &&
+      !/^([-+*]|\d+\.)\s/.test(nextTrimmed) &&
+      !/^>/.test(trimmed) &&
+      !/^>/.test(nextTrimmed) &&
+      !/^\|/.test(trimmed) &&
+      !/^\|/.test(nextTrimmed)
+    ) {
+      result.push(`${line}  `);
+    } else {
+      result.push(line);
+    }
+  }
+
+  return result.join('\n');
+}
+
 function issueToPostMeta(issue: GitHubIssue): PostMeta {
   return {
     id: issue.number,
@@ -260,7 +301,7 @@ function buildPostFile(issue: GitHubIssue, meta: PostMeta, comments: GitHubIssue
     "'''",
     '+++',
     '',
-    issue.body?.trim() || '',
+    preserveSingleLineBreaks(issue.body?.trim() || ''),
     '',
   ]
     .filter(Boolean)
