@@ -241,6 +241,13 @@ a {
   line-height: 1;
 }
 
+.post-edited-date {
+  color: #7f8c8d;
+  font-size: 0.82rem;
+  line-height: 1;
+  font-family: 'Roboto', system-ui, sans-serif;
+}
+
 .pagination {
   display: flex;
   justify-content: space-between;
