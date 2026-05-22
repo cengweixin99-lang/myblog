@@ -369,16 +369,11 @@ a {
 }
 
 .post-toc {
-  position: absolute;
+  position: fixed;
   top: 16px;
-  left: calc(100% + 2rem);
+  left: calc(50% + 432px);
   width: 220px;
   align-self: start;
-}
-
-.post-toc-card {
-  position: sticky;
-  top: 16px;
 }
 
 .post-toc-card {
