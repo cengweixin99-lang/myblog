@@ -50,14 +50,15 @@ const REPO_ROOT = path.resolve(SCRIPT_DIR, '..');
 const README_FILE = path.join(REPO_ROOT, 'README.md');
 const OUTPUT_ROOT = path.join(REPO_ROOT, 'site', 'content');
 const TAGS_DIR = path.join(OUTPUT_ROOT, 'tags');
+const PAGES_DIR = path.join(OUTPUT_ROOT, 'pages');
 const DATA_DIR = path.join(REPO_ROOT, 'site', 'data');
 const NAVIGATION_DATA_FILE = path.join(DATA_DIR, 'navigation.toml');
+const ARCHIVE_FILE = path.join(PAGES_DIR, 'archive.md');
+const TAGS_INDEX_FILE = path.join(PAGES_DIR, 'tags.md');
 const TOP_LABEL = 'Top';
 const SITE_URL = 'https://www.weisley1314.com';
 const SPECIAL_NAV_ITEMS = [
   { label: 'About', name: 'About' },
-  { label: 'Things I like', name: 'Things I like' },
-  { label: "Things I don't like", name: "Things I don't like" },
 ] as const;
 const LEGACY_SPECIAL_PAGE_FILES = ['about.md', 'things-i-like.md', 'things-i-dont-like.md'];
 
@@ -222,6 +223,62 @@ function buildInlinePostLinks(posts: PostMeta[]) {
     .join(', ')}]`;
 }
 
+function buildInlineArchiveGroups(posts: PostMeta[]) {
+  const yearMap = new Map<string, Map<string, PostMeta[]>>();
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  for (const post of posts) {
+    const date = new Date(post.date);
+    const year = String(date.getUTCFullYear());
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const monthMap = yearMap.get(year) ?? new Map<string, PostMeta[]>();
+    const monthPosts = monthMap.get(month) ?? [];
+
+    monthPosts.push(post);
+    monthMap.set(month, monthPosts);
+    yearMap.set(year, monthMap);
+  }
+
+  const years = Array.from(yearMap.entries()).sort(([left], [right]) => right.localeCompare(left));
+
+  return `[${years
+    .map(([year, monthMap]) => {
+      const months = Array.from(monthMap.entries())
+        .sort(([left], [right]) => right.localeCompare(left))
+        .map(([month, monthPosts]) => {
+          const monthIndex = Number(month) - 1;
+          const monthName = monthNames[monthIndex] ?? month;
+          return `{ month = "${month}", month_name = "${monthName}", count = ${monthPosts.length}, posts = ${buildInlinePostLinks(monthPosts)} }`;
+        });
+      const count = Array.from(monthMap.values()).reduce((total, monthPosts) => total + monthPosts.length, 0);
+
+      return `{ year = "${year}", count = ${count}, months = [${months.join(', ')}] }`;
+    })
+    .join(', ')}]`;
+}
+
+function buildInlineTagCloud(tags: Array<{ name: string; slug: string; count: number; weight: number }>) {
+  return `[${tags
+    .map(
+      (tag) =>
+        `{ name = "${escapeToml(tag.name)}", slug = "${escapeToml(tag.slug)}", count = ${tag.count}, weight = ${tag.weight} }`
+    )
+    .join(', ')}]`;
+}
+
 function formatCommentDate(value: string) {
   const formatter = new Intl.DateTimeFormat('zh-CN', {
     timeZone: 'Asia/Shanghai',
@@ -320,6 +377,54 @@ function buildTagPageFile(label: string, posts: PostMeta[]) {
     '[extra]',
     `label_name = "${escapeToml(label)}"`,
     `post_links = ${buildInlinePostLinks(posts)}`,
+    '+++',
+    '',
+  ].join('\n');
+}
+
+function buildArchivePageFile(posts: PostMeta[]) {
+  return [
+    '+++',
+    'title = "Archive"',
+    'template = "archive.html"',
+    'path = "archive"',
+    'draft = false',
+    '[extra]',
+    `archive_groups = ${buildInlineArchiveGroups(posts)}`,
+    '+++',
+    '',
+  ].join('\n');
+}
+
+function buildTagsIndexPageFile(tagMap: Map<string, PostMeta[]>) {
+  const counts = Array.from(tagMap.values()).map((posts) => posts.length);
+  const min = Math.min(...counts, 1);
+  const max = Math.max(...counts, 1);
+  const tags = Array.from(tagMap.entries())
+    .map(([name, posts]) => {
+      const count = posts.length;
+      const weight = max === min ? 3 : Math.round(1 + ((count - min) / (max - min)) * 4);
+      return {
+        name,
+        slug: slugifyTag(name),
+        count,
+        weight,
+      };
+    })
+    .sort((left, right) => {
+      if (left.name === TOP_LABEL) return -1;
+      if (right.name === TOP_LABEL) return 1;
+      return left.name.localeCompare(right.name);
+    });
+
+  return [
+    '+++',
+    'title = "Tags"',
+    'template = "tags.html"',
+    'path = "tags"',
+    'draft = false',
+    '[extra]',
+    `tag_cloud = ${buildInlineTagCloud(tags)}`,
     '+++',
     '',
   ].join('\n');
@@ -462,7 +567,10 @@ async function fetchIssueComments(issueNumber: number): Promise<GitHubIssueComme
 async function ensureDirectories() {
   await rm(path.join(OUTPUT_ROOT, 'pages'), { recursive: true, force: true });
   await rm(TAGS_DIR, { recursive: true, force: true });
+  await rm(path.join(OUTPUT_ROOT, 'archive.md'), { force: true });
+  await rm(path.join(OUTPUT_ROOT, 'tags.md'), { force: true });
   await mkdir(TAGS_DIR, { recursive: true });
+  await mkdir(PAGES_DIR, { recursive: true });
   await mkdir(DATA_DIR, { recursive: true });
 
   const entries = await readdir(OUTPUT_ROOT, { withFileTypes: true });
@@ -507,6 +615,13 @@ async function writeTagPages(posts: GitHubIssue[]) {
       writeFile(path.join(TAGS_DIR, `${slugifyTag(label)}.md`), buildTagPageFile(label, metas), 'utf8')
     )
   );
+
+  await writeFile(TAGS_INDEX_FILE, buildTagsIndexPageFile(tagMap), 'utf8');
+}
+
+async function writeArchivePage(posts: GitHubIssue[]) {
+  const metas = [...posts].sort(byCreatedDesc).map(issueToPostMeta);
+  await writeFile(ARCHIVE_FILE, buildArchivePageFile(metas), 'utf8');
 }
 
 async function writeNavigationData(issues: GitHubIssue[]) {
@@ -537,6 +652,7 @@ async function main() {
 
   await writeSiteContent(posts, commentsByIssueNumber);
   await writeTagPages(posts);
+  await writeArchivePage(posts);
   await writeNavigationData(posts);
   await writeReadmeIndex(posts);
 
