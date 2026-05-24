@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Archive | {{ config.title }}{% endblock title %}
+
+{% block content %}
+  <main class="page-content container">
+    <p class="sign">Archive</p>
+    <div class="archive-groups">
+      {% for group in page.extra.archive_groups %}
+        <section class="archive-year">
+          <h2 class="archive-year-title">
+            {{ group.year }}<sup>{{ group.count }}</sup>
+          </h2>
+          <div class="archive-year-body">
+            {% for month in group.months %}
+              <section class="archive-month">
+                <h3 class="archive-month-title">
+                  {{ month.month_name }}<sup>{{ month.count }}</sup>
+                </h3>
+                <div class="archive-posts">
+                  {% for post in month.posts %}
+                    <article class="archive-post">
+                      <a href="{{ get_url(path=post.path) }}" class="archive-post-title">{{ post.title }}</a>
+                      <p class="archive-post-meta">Date: {{ post.date | date(format="%B %-d, %Y") }}</p>
+                    </article>
+                  {% endfor %}
+                </div>
+              </section>
+            {% endfor %}
+          </div>
+        </section>
+      {% endfor %}
+    </div>
+  </main>
+{% endblock content %}

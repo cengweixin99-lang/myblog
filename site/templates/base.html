@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}{{ config.title }}{% endblock title %}</title>
     <meta name="description" content="{{ config.description }}" />
+    <script>
+      (() => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
     <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path='atom.xml') }}" />
     <link rel="stylesheet" href="{{ get_url(path='site.css', cachebust=true) }}" />
   </head>
@@ -32,6 +40,9 @@
                 {{ nav_macros::render_nav_items(items=nav.items) }}
               </ul>
             </nav>
+            <button type="button" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+              <span class="theme-toggle-icon" aria-hidden="true"></span>
+            </button>
           </div>
         </div>
       </header>
@@ -41,6 +52,9 @@
           <ul class="nav-list nav-list-mobile">
             {{ nav_macros::render_nav_items(items=nav.items) }}
           </ul>
+          <button type="button" class="theme-toggle theme-toggle-mobile" aria-label="Toggle dark mode" title="Toggle dark mode">
+            <span class="theme-toggle-icon" aria-hidden="true"></span>
+          </button>
         </div>
       </aside>
       <div class="page-content">
@@ -111,6 +125,34 @@
           }
 
           link.addEventListener('click', closeMenu);
+        });
+      })();
+
+      (() => {
+        const toggles = document.querySelectorAll('.theme-toggle');
+        if (!toggles.length) {
+          return;
+        }
+
+        const applyTheme = (theme) => {
+          document.documentElement.classList.add('theme-changing');
+          document.documentElement.dataset.theme = theme;
+          localStorage.setItem('theme', theme);
+          toggles.forEach((toggle) => {
+            toggle.setAttribute('aria-pressed', String(theme === 'dark'));
+          });
+          requestAnimationFrame(() => {
+            document.documentElement.classList.remove('theme-changing');
+          });
+        };
+
+        const currentTheme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        applyTheme(currentTheme);
+
+        toggles.forEach((toggle) => {
+          toggle.addEventListener('click', () => {
+            applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+          });
         });
       })();
     </script>

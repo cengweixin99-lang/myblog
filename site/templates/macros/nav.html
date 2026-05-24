@@ -4,4 +4,6 @@
   {% for item in items %}
     <li><a href="{{ get_url(path=item.path) }}" class="hover-underline-animation">{{ item.name }}</a></li>
   {% endfor %}
+  <li><a href="{{ get_url(path='archive') }}" class="hover-underline-animation">Archive</a></li>
+  <li><a href="{{ get_url(path='tags') }}" class="hover-underline-animation">Tags</a></li>
 {% endmacro render_nav_items %}

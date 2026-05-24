@@ -14,6 +14,8 @@ This directory is the Zola site for the GitHub-issues-driven blog.
   Home section config, including pagination.
 - `content/tags/*`
   Generated tag collection pages like `Top` or `Published`.
+- `content/pages/*`
+  Generated standalone pages such as `Archive` and the tag cloud index.
 - `content/*.md`
   Generated post files, one authored issue per file.
 - `public/*`
@@ -22,9 +24,10 @@ This directory is the Zola site for the GitHub-issues-driven blog.
 ## Content rules
 
 - Any issue authored by `GITHUB_AUTHOR` or `GITHUB_OWNER` becomes a post.
-- `About`, `Things I like`, and `Things I don't like` are normal labels, and the nav links point to the newest matching `/post/<id>/`.
+- `About` appears in the nav and points to the newest matching `/post/<id>/`.
 - `Top`, `Published`, and any other normal labels remain visible as post tags.
 - Each visible tag gets its own collection page under `/tag/<slug>/`.
+- `/archive/` lists every post by date, and `/tags/` shows all labels as a tag cloud.
 
 ## Local workflow
 
@@ -59,5 +62,6 @@ zola serve
 The fetch script recreates these every run:
 
 - `content/tags/`
+- `content/pages/`
 - `data/navigation.toml`
 - `content/*.md` generated from issues
