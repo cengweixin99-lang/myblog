@@ -23,6 +23,10 @@ A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 
 - [Things I like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
 
+## 一些照片
+
+- [大学毕业照](https://github.com/cengweixin99-lang/myblog/issues/20) - 2026-05-31
+
 ## Project Notes
 
 - `scripts/fetch_issues.ts` pulls authored GitHub issues and comments, then generates Zola content.
