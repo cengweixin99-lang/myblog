@@ -9,7 +9,6 @@ A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 ## Top
 
 - [Things I like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
-- [Things I don't like](https://github.com/cengweixin99-lang/myblog/issues/16) - 2026-05-21
 
 ## About
 
@@ -18,10 +17,6 @@ A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 ## AI/Agent
 
 - [LangChain学习笔记](https://github.com/cengweixin99-lang/myblog/issues/21) - 2026-07-01
-
-## Things I don't like
-
-- [Things I don't like](https://github.com/cengweixin99-lang/myblog/issues/16) - 2026-05-21
 
 ## Things I like
 
