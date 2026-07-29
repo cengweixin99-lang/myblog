@@ -972,6 +972,26 @@ html[data-theme='dark'] .theme-toggle-icon {
   padding-top: 0;
 }
 
+.comments-live {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.utterances-host,
+.utterances-host .utterances {
+  width: 100%;
+  max-width: 100%;
+}
+
+.utterances-host .utterances {
+  margin: 0;
+}
+
+.utterances-host iframe {
+  color-scheme: light dark;
+}
+
 .post-detail-divider {
   width: 100%;
   height: 1px;

@@ -29,8 +29,14 @@
           </div>
         {% endif %}
         <div class="post-detail-divider" aria-hidden="true"></div>
-        {% if page.extra.has_comments and page.extra.comments_html %}
-          {{ page.extra.comments_html | safe }}
+        {% if page.extra.issue_number %}
+          <section class="comments-block comments-live">
+            <div
+              class="utterances-host"
+              data-repo="{{ config.extra.repo }}"
+              data-issue-number="{{ page.extra.issue_number }}"
+            ></div>
+          </section>
         {% endif %}
         <nav class="post-navigation">
           {% if page.lower %}
@@ -233,4 +239,39 @@
       });
     })();
   </script>
+  {% if page.extra.issue_number %}
+    <script>
+      (() => {
+        const host = document.querySelector('.utterances-host');
+        if (!host || host.dataset.loaded === 'true') {
+          return;
+        }
+
+        const getTheme = () => document.documentElement.dataset.theme === 'dark' ? 'github-dark' : 'github-light';
+        const syncTheme = () => {
+          const frame = document.querySelector('iframe.utterances-frame');
+          if (frame?.contentWindow) {
+            frame.contentWindow.postMessage({ type: 'set-theme', theme: getTheme() }, 'https://utteranc.es');
+          }
+        };
+
+        const script = document.createElement('script');
+        script.src = 'https://utteranc.es/client.js';
+        script.setAttribute('repo', host.dataset.repo || '');
+        script.setAttribute('issue-number', host.dataset.issueNumber || '');
+        script.setAttribute('theme', getTheme());
+        script.setAttribute('crossorigin', 'anonymous');
+        script.async = true;
+        script.onload = syncTheme;
+
+        host.dataset.loaded = 'true';
+        host.appendChild(script);
+
+        new MutationObserver(syncTheme).observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-theme'],
+        });
+      })();
+    </script>
+  {% endif %}
 {% endblock content %}
