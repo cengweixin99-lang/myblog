@@ -826,8 +826,8 @@ html[data-theme='dark'] .theme-toggle-icon {
 .post-toc {
   position: fixed;
   top: 116px;
-  left: calc(50% + 480px);
-  width: 200px;
+  left: calc(50% + 640px);
+  width: 180px;
   align-self: start;
 }
 
@@ -959,6 +959,12 @@ html[data-theme='dark'] .theme-toggle-icon {
 .post-toc-link::before {
   content: none;
   display: none;
+}
+
+@media (max-width: 1760px) {
+  .post-toc {
+    display: none;
+  }
 }
 
 .sign {
