@@ -12,7 +12,7 @@ Rules:
 - Any issue you publish becomes a post automatically.
 - `Top` also appears in the nav entry and its tag collection page.
 - `Published` remains a normal visible tag; it is no longer a publish gate.
-- `About` appears in the nav and points to the newest issue with the `About` label.
+- `About` and `Friends` appear in the nav and point to the newest issue with the matching label.
 - `Things I like`, `Things I don't like`, and any other label become visible post tags and collection pages.
 - Any other label becomes a visible post tag and collection page.
 

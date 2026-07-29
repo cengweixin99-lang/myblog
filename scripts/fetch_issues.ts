@@ -59,6 +59,7 @@ const TOP_LABEL = 'Top';
 const SITE_URL = 'https://www.weisley1314.com';
 const SPECIAL_NAV_ITEMS = [
   { label: 'About', name: 'About' },
+  { label: 'Friends', name: 'Friends' },
 ] as const;
 const LEGACY_SPECIAL_PAGE_FILES = ['about.md', 'things-i-like.md', 'things-i-dont-like.md'];
 

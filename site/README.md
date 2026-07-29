@@ -24,7 +24,7 @@ This directory is the Zola site for the GitHub-issues-driven blog.
 ## Content rules
 
 - Any issue authored by `GITHUB_AUTHOR` or `GITHUB_OWNER` becomes a post.
-- `About` appears in the nav and points to the newest matching `/post/<id>/`.
+- `About` and `Friends` appear in the nav and point to the newest matching `/post/<id>/`.
 - `Top`, `Published`, and any other normal labels remain visible as post tags.
 - Each visible tag gets its own collection page under `/tag/<slug>/`.
 - `/archive/` lists every post by date, and `/tags/` shows all labels as a tag cloud.
