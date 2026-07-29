@@ -19,6 +19,10 @@ A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 - [Agent之RAG篇](https://github.com/cengweixin99-lang/myblog/issues/23) - 2026-07-29
 - [LangChain学习笔记](https://github.com/cengweixin99-lang/myblog/issues/21) - 2026-07-01
 
+## Friends
+
+- [友情链接](https://github.com/cengweixin99-lang/myblog/issues/24) - 2026-07-29
+
 ## Things I like
 
 - [Things I like](https://github.com/cengweixin99-lang/myblog/issues/17) - 2026-05-21
