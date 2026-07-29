@@ -57,4 +57,72 @@
       {% endif %}
     </div>
   </main>
+  {% if has_toc %}
+    <script>
+      (() => {
+        const headings = Array.from(document.querySelectorAll('.post-content h1[id], .post-content h2[id], .post-content h3[id], .post-content h4[id], .post-content h5[id], .post-content h6[id]'));
+        const tocLinks = Array.from(document.querySelectorAll('.post-toc-link'));
+        const tocScroll = document.querySelector('.post-toc-scroll');
+
+        if (!headings.length || !tocLinks.length) {
+          return;
+        }
+
+        const linkById = new Map();
+        tocLinks.forEach((link) => {
+          try {
+            const url = new URL(link.href);
+            const id = decodeURIComponent(url.hash.slice(1));
+            if (id) {
+              linkById.set(id, link);
+            }
+          } catch {
+            const id = decodeURIComponent((link.getAttribute('href') || '').split('#')[1] || '');
+            if (id) {
+              linkById.set(id, link);
+            }
+          }
+        });
+
+        let frame = 0;
+        const setActiveLink = () => {
+          frame = 0;
+          const anchorOffset = 120;
+          let currentHeading = headings[0];
+
+          for (const heading of headings) {
+            if (heading.getBoundingClientRect().top <= anchorOffset) {
+              currentHeading = heading;
+            } else {
+              break;
+            }
+          }
+
+          const activeLink = linkById.get(currentHeading.id);
+          if (!activeLink) {
+            return;
+          }
+
+          tocLinks.forEach((link) => {
+            link.classList.toggle('is-active', link === activeLink);
+          });
+
+          if (tocScroll && tocScroll.scrollHeight > tocScroll.clientHeight) {
+            activeLink.scrollIntoView({ block: 'nearest' });
+          }
+        };
+
+        const requestUpdate = () => {
+          if (!frame) {
+            frame = requestAnimationFrame(setActiveLink);
+          }
+        };
+
+        setActiveLink();
+        window.addEventListener('scroll', requestUpdate, { passive: true });
+        window.addEventListener('resize', requestUpdate);
+        window.addEventListener('hashchange', requestUpdate);
+      })();
+    </script>
+  {% endif %}
 {% endblock content %}
