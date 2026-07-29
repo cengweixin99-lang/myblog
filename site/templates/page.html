@@ -49,7 +49,9 @@
         <aside class="post-toc" aria-label="Table of contents">
           <div class="post-toc-card">
             <p class="post-toc-heading">CONTENTS</p>
-            {{ toc_macros::render_toc(items=page.toc) }}
+            <div class="post-toc-scroll">
+              {{ toc_macros::render_toc(items=page.toc) }}
+            </div>
           </div>
         </aside>
       {% endif %}
