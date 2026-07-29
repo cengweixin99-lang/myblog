@@ -16,6 +16,7 @@ A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 
 ## AI/Agent
 
+- [Agent之RAG篇](https://github.com/cengweixin99-lang/myblog/issues/23) - 2026-07-29
 - [LangChain学习笔记](https://github.com/cengweixin99-lang/myblog/issues/21) - 2026-07-01
 
 ## Things I like
