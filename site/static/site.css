@@ -421,8 +421,9 @@ html[data-theme='dark'] .theme-toggle-icon {
 }
 
 .markdown-table-wrap {
-  width: 100%;
+  width: fit-content;
   max-width: 100%;
+  min-width: min(100%, 420px);
   margin: 1.2rem 0;
   overflow-x: auto;
   border: 1px solid var(--line);
@@ -430,8 +431,8 @@ html[data-theme='dark'] .theme-toggle-icon {
 }
 
 .post-content table {
-  width: 100%;
-  min-width: max-content;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: 0.96rem;
   line-height: 1.6;
@@ -479,8 +480,9 @@ html[data-theme='dark'] .theme-toggle-icon {
 }
 
 .code-block {
-  width: 100%;
+  width: fit-content;
   max-width: 100%;
+  min-width: min(100%, 420px);
   margin: 1.15rem 0;
   background: var(--pre-bg);
   border: 1px solid var(--line);
@@ -824,8 +826,8 @@ html[data-theme='dark'] .theme-toggle-icon {
 .post-toc {
   position: fixed;
   top: 116px;
-  left: calc(50% + 432px);
-  width: 220px;
+  left: calc(50% + 480px);
+  width: 200px;
   align-self: start;
 }
 
