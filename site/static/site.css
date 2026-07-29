@@ -301,6 +301,7 @@ html[data-theme='dark'] .theme-toggle-icon {
 .post-detail-layout {
   display: grid;
   position: relative;
+  min-width: 0;
 }
 
 .post-detail-layout-with-toc {
@@ -384,6 +385,8 @@ html[data-theme='dark'] .theme-toggle-icon {
   font-size: 1.1rem;
   line-height: 1.8;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .post-content p {
@@ -419,6 +422,7 @@ html[data-theme='dark'] .theme-toggle-icon {
 
 .markdown-table-wrap {
   width: 100%;
+  max-width: 100%;
   margin: 1.2rem 0;
   overflow-x: auto;
   border: 1px solid var(--line);
@@ -475,6 +479,8 @@ html[data-theme='dark'] .theme-toggle-icon {
 }
 
 .code-block {
+  width: 100%;
+  max-width: 100%;
   margin: 1.15rem 0;
   background: var(--pre-bg);
   border: 1px solid var(--line);
@@ -492,6 +498,7 @@ html[data-theme='dark'] .theme-toggle-icon {
   padding: 0.45rem 0.72rem;
   border-bottom: 1px solid var(--line);
   background: var(--surface-muted);
+  min-width: 0;
 }
 
 .code-block-language {
@@ -499,6 +506,10 @@ html[data-theme='dark'] .theme-toggle-icon {
   font-size: 0.76rem;
   line-height: 1;
   font-family: 'Roboto', system-ui, sans-serif;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .code-copy-button {
@@ -511,6 +522,7 @@ html[data-theme='dark'] .theme-toggle-icon {
   padding: 0.36rem 0.48rem;
   cursor: pointer;
   font-family: 'Roboto', system-ui, sans-serif;
+  flex-shrink: 0;
   transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 }
 
@@ -524,6 +536,7 @@ html[data-theme='dark'] .theme-toggle-icon {
 .post-content pre {
   margin: 0;
   padding: 1rem 1.1rem;
+  max-width: 100%;
   overflow-x: auto;
   background: transparent;
   border: none;
@@ -533,6 +546,8 @@ html[data-theme='dark'] .theme-toggle-icon {
 
 .post-content pre code {
   display: block;
+  width: max-content;
+  min-width: 100%;
   padding: 0;
   background: transparent;
   border-radius: 0;
