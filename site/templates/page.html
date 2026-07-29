@@ -125,4 +125,112 @@
       })();
     </script>
   {% endif %}
+  <script>
+    (() => {
+      const postContent = document.querySelector('.post-content');
+      if (!postContent) {
+        return;
+      }
+
+      postContent.querySelectorAll('table').forEach((table) => {
+        if (table.parentElement?.classList.contains('markdown-table-wrap')) {
+          return;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'markdown-table-wrap';
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      });
+
+      const formatLanguage = (value) => {
+        const normalized = (value || '').replace(/^language-/, '').replace(/^lang-/, '').trim();
+        const names = {
+          bash: 'Bash',
+          css: 'CSS',
+          html: 'HTML',
+          js: 'JavaScript',
+          javascript: 'JavaScript',
+          json: 'JSON',
+          md: 'Markdown',
+          markdown: 'Markdown',
+          powershell: 'PowerShell',
+          ps1: 'PowerShell',
+          shell: 'Shell',
+          sh: 'Shell',
+          ts: 'TypeScript',
+          typescript: 'TypeScript',
+          yaml: 'YAML',
+          yml: 'YAML',
+        };
+        return names[normalized.toLowerCase()] || normalized || 'Code';
+      };
+
+      const getCodeLanguage = (pre, code) => {
+        const className = `${pre.className || ''} ${code?.className || ''}`;
+        const matched = className.match(/(?:language|lang)-([a-z0-9_+-]+)/i);
+        return formatLanguage(pre.dataset.lang || code?.dataset.lang || matched?.[1] || '');
+      };
+
+      const copyCode = async (text) => {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+          return;
+        }
+
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      };
+
+      postContent.querySelectorAll('pre').forEach((pre) => {
+        if (pre.parentElement?.classList.contains('code-block')) {
+          return;
+        }
+
+        const code = pre.querySelector('code');
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-block';
+
+        const header = document.createElement('div');
+        header.className = 'code-block-header';
+
+        const language = document.createElement('span');
+        language.className = 'code-block-language';
+        language.textContent = getCodeLanguage(pre, code);
+
+        const copyButton = document.createElement('button');
+        copyButton.type = 'button';
+        copyButton.className = 'code-copy-button';
+        copyButton.textContent = 'Copy';
+        copyButton.setAttribute('aria-label', 'Copy code');
+
+        copyButton.addEventListener('click', async () => {
+          const originalText = copyButton.textContent;
+          try {
+            await copyCode(code?.innerText || pre.innerText || '');
+            copyButton.textContent = 'Copied';
+            copyButton.classList.add('is-copied');
+          } catch {
+            copyButton.textContent = 'Failed';
+          }
+
+          window.setTimeout(() => {
+            copyButton.textContent = originalText;
+            copyButton.classList.remove('is-copied');
+          }, 1400);
+        });
+
+        header.append(language, copyButton);
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.append(header, pre);
+      });
+    })();
+  </script>
 {% endblock content %}

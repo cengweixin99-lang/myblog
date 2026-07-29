@@ -417,6 +417,55 @@ html[data-theme='dark'] .theme-toggle-icon {
   height: auto;
 }
 
+.markdown-table-wrap {
+  width: 100%;
+  margin: 1.2rem 0;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.post-content table {
+  width: 100%;
+  min-width: max-content;
+  border-collapse: collapse;
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.post-content th,
+.post-content td {
+  padding: 0.62rem 0.78rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.post-content th:last-child,
+.post-content td:last-child {
+  border-right: none;
+}
+
+.post-content tr:last-child td {
+  border-bottom: none;
+}
+
+.post-content th {
+  color: var(--heading);
+  background: var(--surface-muted);
+  font-weight: 600;
+}
+
+.post-content tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--surface-muted) 58%, transparent);
+}
+
+.post-content td code,
+.post-content th code {
+  white-space: nowrap;
+}
+
 .post-content code {
   padding: 0.08rem 0.3rem;
   background: var(--code-bg);
@@ -425,15 +474,61 @@ html[data-theme='dark'] .theme-toggle-icon {
   font-family: Consolas, "Courier New", monospace;
 }
 
-.post-content pre {
+.code-block {
   margin: 1.15rem 0;
-  padding: 1rem 1.1rem;
-  overflow-x: auto;
   background: var(--pre-bg);
   border: 1px solid var(--line);
   border-radius: 6px;
-  line-height: 1.65;
   box-shadow: 0 10px 24px rgba(52, 73, 94, 0.06);
+  overflow: hidden;
+}
+
+.code-block-header {
+  min-height: 2.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.72rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-muted);
+}
+
+.code-block-language {
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1;
+  font-family: 'Roboto', system-ui, sans-serif;
+}
+
+.code-copy-button {
+  border: 1px solid var(--control-line);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1;
+  padding: 0.36rem 0.48rem;
+  cursor: pointer;
+  font-family: 'Roboto', system-ui, sans-serif;
+  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+.code-copy-button:hover,
+.code-copy-button.is-copied {
+  color: var(--accent);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+
+.post-content pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  line-height: 1.65;
 }
 
 .post-content pre code {
