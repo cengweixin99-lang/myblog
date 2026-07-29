@@ -21,7 +21,7 @@
                   {% for post in month.posts %}
                     <article class="archive-post">
                       <a href="{{ get_url(path=post.path) }}" class="archive-post-title">{{ post.title }}</a>
-                      <p class="archive-post-meta">Date: {{ post.date | date(format="%B %-d, %Y") }}</p>
+                      <p class="archive-post-meta">{{ post.date | date(format="%B %-d, %Y") }}</p>
                     </article>
                   {% endfor %}
                 </div>
