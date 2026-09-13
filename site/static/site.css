@@ -393,6 +393,18 @@ html[data-theme='dark'] .theme-toggle-icon {
   margin-bottom: 1rem;
 }
 
+.post-content blockquote {
+  margin: 1.2rem 0;
+  padding: 0.1rem 0 0.1rem 1rem;
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
+  background: var(--accent-soft);
+}
+
+.post-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
 .post-content ul,
 .post-content ol {
   margin: 0 0 1rem 1.35rem;
