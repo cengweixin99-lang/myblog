@@ -398,7 +398,6 @@ html[data-theme='dark'] .theme-toggle-icon {
   padding: 0.1rem 0 0.1rem 1rem;
   border-left: 3px solid var(--accent);
   color: var(--muted);
-  background: var(--accent-soft);
 }
 
 .post-content blockquote p:last-child {
