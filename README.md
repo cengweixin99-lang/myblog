@@ -31,6 +31,11 @@ A minimalist personal blog powered by GitHub Issues, GitHub Actions, and Zola.
 
 - [最好的人际关系](https://github.com/cengweixin99-lang/myblog/issues/22) - 2026-07-23
 
+## 系统设计
+
+- [WebSocket深入理解（下）：从一条连接到生产级实时通信系统](https://github.com/cengweixin99-lang/myblog/issues/26) - 2026-09-13
+- [WebSocket深入理解（上）：从一条连接到生产级实时通信系统](https://github.com/cengweixin99-lang/myblog/issues/25) - 2026-09-13
+
 ## Project Notes
 
 - `scripts/fetch_issues.ts` pulls authored GitHub issues and comments, then generates Zola content.
