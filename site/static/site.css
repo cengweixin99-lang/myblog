@@ -28,7 +28,7 @@
   --shadow-comment: 0 8px 18px rgba(52, 73, 94, 0.1);
   --drawer-backdrop: rgba(52, 73, 94, 0.14);
   --code-bg: #f7f7f7;
-  --pre-bg: #fafafa;
+  --pre-bg: #f3f3f3;
 }
 
 html[data-theme='dark'] {
@@ -54,7 +54,7 @@ html[data-theme='dark'] {
   --shadow-comment: 0 10px 24px rgba(0, 0, 0, 0.44);
   --drawer-backdrop: rgba(0, 0, 0, 0.55);
   --code-bg: #11161b;
-  --pre-bg: #0d1116;
+  --pre-bg: #181c20;
 }
 
 html {
@@ -498,13 +498,13 @@ html[data-theme='dark'] .theme-toggle-icon {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.45rem 0.72rem;
-  border-bottom: 1px solid var(--accent-line);
-  background: var(--surface-muted);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  background: var(--accent);
   min-width: 0;
 }
 
 .code-block-language {
-  color: var(--muted);
+  color: #ffffff;
   font-size: 0.76rem;
   line-height: 1;
   font-family: 'Roboto', system-ui, sans-serif;
@@ -515,10 +515,10 @@ html[data-theme='dark'] .theme-toggle-icon {
 }
 
 .code-copy-button {
-  border: 1px solid var(--control-line);
+  border: 1px solid rgba(255, 255, 255, 0.62);
   border-radius: 4px;
   background: transparent;
-  color: var(--muted);
+  color: #ffffff;
   font-size: 0.74rem;
   line-height: 1;
   padding: 0.36rem 0.48rem;
@@ -531,8 +531,8 @@ html[data-theme='dark'] .theme-toggle-icon {
 .code-copy-button:hover,
 .code-copy-button.is-copied {
   color: var(--accent);
-  border-color: var(--accent-line);
-  background: var(--accent-soft);
+  border-color: #ffffff;
+  background: #ffffff;
 }
 
 .post-content pre {
