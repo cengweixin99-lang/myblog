@@ -55,7 +55,8 @@ jobs:
       - name: Setup Zola
         uses: taiki-e/install-action@v2
         with:
-          tool: zola
+          # Keep the existing Tera macro templates compatible.
+          tool: zola@0.22.1
 
       - name: Clean previous Zola output
         run: rm -rf public
